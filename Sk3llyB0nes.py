@@ -48,8 +48,8 @@ def connect_bones():
 		s.bind((host, port))
 		s.listen(5) # number of bad connections
 	except socket.error as msg:
-		print(Style.BRIGHT + Fore.RED + "[☠] Socket binding error: " + str(msg) + "\n" + "Retrying..." + Style.RESET_ALL)
-		socket_bind()
+		print(Style.BRIGHT + Fore.RED + "\n" "[☠] Socket binding error: " + str(msg) + Style.RESET_ALL + "\n")
+		main()
 
 # Connect
 def create_skeleton():
@@ -89,7 +89,7 @@ def command_skeleton(conn):
 def scan(addr):
 	try:
 		scanner = nmap.PortScanner()
-		scanner.scan(addr, '1-1000')
+		scanner.scan(addr, prts, arguments="-sV") # basically just a service scan
 		print(Style.BRIGHT + Fore.BLUE + "[i] Host found: " + Fore.WHITE + scanner[addr].hostname() + Style.RESET_ALL)
 		if scanner[addr].state() == "up":
 			print(Style.BRIGHT + "[i] Status: " + Fore.GREEN + "Up" + Style.RESET_ALL)
@@ -100,15 +100,21 @@ def scan(addr):
 		else:
 			print(Style.BRIGHT + Fore.RED + "[☠] An unkown error occured" + Style.RESET_ALL)
 
-		print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Open ports: " + Fore.WHITE)
-		print("[i] Protocol: " + scanner[addr].all_protocols()[0])
-		for p in scanner[addr]['tcp'].keys():
-			print("[i] Open port: " + str(p))
-		print(Style.RESET_ALL)
+		try:
+			print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Open ports: " + Fore.WHITE)
+			print("[i] Protocol: " + scanner[addr].all_protocols()[0])
+			for p in scanner[addr]['tcp'].keys():
+				print("[i] Open port: " + str(p) + "\tService: " + scanner[addr]['tcp'][p]['name']) # tcp only for now. This line prints service info
+
+			print(Style.RESET_ALL)
+		except IndexError:
+			print(Style.BRIGHT + Fore.YELLOW + "[i] No open ports discovered" + Style.RESET_ALL)
 		
 
-	except KeyError:
-		print("\n" + Style.BRIGHT + Fore.RED + "[☠] Host not specified or invalid host!" + Style.RESET_ALL + "\n")
+	except KeyError as msg:
+		print("\n" + Style.BRIGHT + Fore.RED + "[☠] Error with keyword: " + str(msg) + " Either invalid host or port range" + "\n")
+		print("Correct usage example: scan 127.0.0.1\n")
+		print("Port range: 55-1040" +  Style.RESET_ALL)
 
 
 def main():
@@ -141,8 +147,13 @@ def main():
 						print(Style.BRIGHT + Fore.RED + "[☠] You cannot use a port below 1 or above 65353" + Style.RESET_ALL + "\n")
 						continue
 				elif cmd[:4].lower() == "scan":
-					# name error exception needs to be handled: no host!
-					scan(cmd[5:])
+					global prts
+					prts = input(Style.BRIGHT + Fore.BLUE + "[i] Port range (blank for default 1000): " +  Style.RESET_ALL)
+					if prts == "":
+						prts = '1-1000'
+						scan(cmd[5:])
+					else:
+						scan(cmd[5:])
 				elif cmd.lower() == "help":
 					print("\nlisten - Start listening on specified port")
 					print("port - Specify what port to listen on, for example: port 1337")
