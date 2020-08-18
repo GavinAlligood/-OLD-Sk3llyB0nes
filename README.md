@@ -5,4 +5,6 @@ Im creating Sk3llyB0nes to help automate things while i do penetration testing/c
 NOTE: iOS (and windows) are seperate because of notification modules. Ill try to find a notification module that works for linux and windows(and maybe even iOS)
 the reason is because i use notify2 which uses dbus which you cant get on windows or iOS for that matter. Im running this script on iSH on my iphone (beta app. Ive installed pip and everything succesfully): https://ish.app/
 
+i will soon organize the files better as well
+
 thanks to: thenewboston for initial reverse shell code. You taught me alot
