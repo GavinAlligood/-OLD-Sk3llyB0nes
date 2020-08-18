@@ -131,9 +131,6 @@ def main():
 					create_skeleton()
 				elif cmd.lower() == "clear":
 					os.system('clear')
-				elif cmd.lower() == "cls":
-					os.system('cls')
-					## for windows
 				elif cmd[:4].lower() == "port":
 					try:
 						print(Style.BRIGHT)
