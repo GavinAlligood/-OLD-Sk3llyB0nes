@@ -151,12 +151,30 @@ def main():
 						scan(cmd[5:])
 					else:
 						scan(cmd[5:])
+				elif cmd.lower() == "devices":
+					nm = nmap.PortScanner()
+					host = input(Style.BRIGHT + Fore.BLUE + "[i] Enter your subnet: " + Style.RESET_ALL)
+					nm.scan(hosts=host + '/24', arguments='n -sP -PE -PA21,23,80,3389')
+					print(Style.BRIGHT + Fore.YELLOW + "Note: some hosts may block ping requests. Those that do will not show up here")
+					for ip in nm.all_hosts():
+						if nm[ip].state() == "up":
+							print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Host found: " + Fore.WHITE + nm[ip].hostname() + " | " + Fore.WHITE + ip + " | Status: " + Fore.GREEN + "Up")
+						elif nm[ip].state() == "down":
+							print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Host found: " + Fore.WHITE + nm[ip].hostname() + " | " + Fore.WHITE + ip + " | Status: " + Fore.RED + "Down")
+						else:
+							print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Host found: " + Fore.WHITE + nm[ip].hostname() + " | " + Fore.WHITE + ip + " | Status: " +  Fore.YELLOW + "Unkown")
+					# not entirely sure if ill keep this up,down, and unkown stuff since it only prints the ones that are up
+					print(Style.RESET_ALL) # also prints a new line as well as resetting the style
+
 				elif cmd.lower() == "help":
-					print("\nlisten - Start listening on specified port")
+					print(Style.BRIGHT + Fore.YELLOW)
+					print("listen - Start listening on specified port")
 					print("port - Specify what port to listen on, for example: port 1337")
 					print("exit - closes the application")
 					print("scan - scan a host for open ports. Example: scan 127.0.0.1")
-					print("clear/cls - clears screen (cls for windows, clear for linux)\n")
+					print("devices - lists active devices connected to your network.")
+					print("clear/cls - clears screen (cls for windows, clear for linux)")
+					print(Style.RESET_ALL)
 				elif cmd.lower() == "exit":
 					sys.exit()
 
