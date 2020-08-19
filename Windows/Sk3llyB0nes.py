@@ -20,10 +20,6 @@ print("                      |___/ ")
 
 ### simply raising the ammount of bytes sent changes things... mess with this and monitor network resources being used 
 
-## Notification settings:
-ICON_PATH = "/image/skelly.png"
-notify2.init("Sk3lly B0nes")
-
 # Create socket
 def gather_bones():
 	try:
