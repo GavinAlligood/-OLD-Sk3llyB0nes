@@ -2,7 +2,6 @@ import socket
 import sys
 import os
 from colorama import Fore, Back, Style
-import notify2
 import nmap
 
 print(" _____ _    _____ _ _      ______  _____ ")
@@ -14,9 +13,11 @@ print("\____/|_|\_\____/|_|_|\__, \____/  \___/|_| |_|\___||___/ ")
 print("                       __/ | ")
 print("                      |___/ ")
 
-####                                                                                                               ####
-#### Only difference in 'iOS version' is that there is no notification module since i had trouble with that on iOS ####
-####                                                                                                               ####
+### WINDOWS VERSION ###
+
+### Run in background Unix: python3 myfile &
+
+### simply raising the ammount of bytes sent changes things... mess with this and monitor network resources being used 
 
 # Create socket
 def gather_bones():
@@ -44,17 +45,19 @@ def connect_bones():
 		s.bind((host, port))
 		s.listen(5) # number of bad connections
 	except socket.error as msg:
-		print(Style.BRIGHT + Fore.RED + "[☠] Socket binding error: " + str(msg) + "\n" + "Retrying..." + Style.RESET_ALL)
-		socket_bind()
+		print(Style.BRIGHT + Fore.RED + "\n" "[☠] Socket binding error: " + str(msg) + Style.RESET_ALL + "\n")
+		main()
 
 # Connect
 def create_skeleton():
-	# socket MUST be listening before it can accept
-	conn, address = s.accept()
-	print(Style.BRIGHT + Fore.BLUE + "[i] Connected to " + address[0] + ':' + str(port) + Style.RESET_ALL)
-	command_skeleton(conn)
-	# handle broken pipe exception !!!
-	conn.close()
+	try:
+		# socket MUST be listening before it can accept
+		conn, address = s.accept()
+		print(Style.BRIGHT + Fore.BLUE + "[i] Connected to " + address[0] + ':' + str(port) + Style.RESET_ALL)
+		command_skeleton(conn)
+		conn.close()
+	except BrokenPipeError:
+		print(Style.BRIGHT + Fore.RED + "[☠] Broken Pipe. Closing shell" + Style.RESET_ALL + "\n")
 
 def command_skeleton(conn):
 	while True:
@@ -80,7 +83,7 @@ def command_skeleton(conn):
 def scan(addr):
 	try:
 		scanner = nmap.PortScanner()
-		scanner.scan(addr, '1-1000')
+		scanner.scan(addr, prts, arguments="-sV") # basically just a service scan
 		print(Style.BRIGHT + Fore.BLUE + "[i] Host found: " + Fore.WHITE + scanner[addr].hostname() + Style.RESET_ALL)
 		if scanner[addr].state() == "up":
 			print(Style.BRIGHT + "[i] Status: " + Fore.GREEN + "Up" + Style.RESET_ALL)
@@ -91,15 +94,21 @@ def scan(addr):
 		else:
 			print(Style.BRIGHT + Fore.RED + "[☠] An unkown error occured" + Style.RESET_ALL)
 
-		print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Open ports: " + Fore.WHITE)
-		print("[i] Protocol: " + scanner[addr].all_protocols()[0])
-		for p in scanner[addr]['tcp'].keys():
-			print("[i] Open port: " + str(p))
-		print(Style.RESET_ALL)
+		try:
+			print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Open ports: " + Fore.WHITE)
+			print("[i] Protocol: " + scanner[addr].all_protocols()[0])
+			for p in scanner[addr]['tcp'].keys():
+				print("[i] Open port: " + str(p) + "\tService: " + scanner[addr]['tcp'][p]['name']) # tcp only for now. This line prints service info
+
+			print(Style.RESET_ALL)
+		except IndexError:
+			print(Style.BRIGHT + Fore.YELLOW + "[i] No open ports discovered" + Style.RESET_ALL)
 		
 
-	except KeyError:
-		print("\n" + Style.BRIGHT + Fore.RED + "[☠] Host not specified or invalid host!" + Style.RESET_ALL + "\n")
+	except KeyError as msg:
+		print("\n" + Style.BRIGHT + Fore.RED + "[☠] Error with keyword: " + str(msg) + " Either invalid host or port range" + "\n")
+		print("Correct usage example: scan 127.0.0.1\n")
+		print("Port range: 55-1040" +  Style.RESET_ALL)
 
 
 def main():
@@ -116,9 +125,6 @@ def main():
 					create_skeleton()
 				elif cmd.lower() == "clear":
 					os.system('clear')
-				elif cmd.lower() == "cls":
-					os.system('cls')
-					## for windows
 				elif cmd[:4].lower() == "port":
 					try:
 						print(Style.BRIGHT)
@@ -132,14 +138,37 @@ def main():
 						print(Style.BRIGHT + Fore.RED + "[☠] You cannot use a port below 1 or above 65353" + Style.RESET_ALL + "\n")
 						continue
 				elif cmd[:4].lower() == "scan":
-					# name error exception needs to be handled: no host!
-					scan(cmd[5:])
+					global prts
+					prts = input(Style.BRIGHT + Fore.BLUE + "[i] Port range (blank for default 1000): " +  Style.RESET_ALL)
+					if prts == "":
+						prts = '1-1000'
+						scan(cmd[5:])
+					else:
+						scan(cmd[5:])
+				elif cmd.lower() == "devices":
+					nm = nmap.PortScanner()
+					host = input(Style.BRIGHT + Fore.BLUE + "[i] Enter your subnet: " + Style.RESET_ALL)
+					nm.scan(hosts=host + '/24', arguments='n -sP -PE -PA21,23,80,3389')
+					print(Style.BRIGHT + Fore.YELLOW + "Note: some hosts may block ping requests. Those that do will not show up here")
+					for ip in nm.all_hosts():
+						if nm[ip].state() == "up":
+							print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Host found: " + Fore.WHITE + nm[ip].hostname() + " | " + Fore.WHITE + ip + " | Status: " + Fore.GREEN + "Up")
+						elif nm[ip].state() == "down":
+							print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Host found: " + Fore.WHITE + nm[ip].hostname() + " | " + Fore.WHITE + ip + " | Status: " + Fore.RED + "Down")
+						else:
+							print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Host found: " + Fore.WHITE + nm[ip].hostname() + " | " + Fore.WHITE + ip + " | Status: " +  Fore.YELLOW + "Unkown")
+					# not entirely sure if ill keep this up,down, and unkown stuff since it only prints the ones that are up
+					print(Style.RESET_ALL) # also prints a new line as well as resetting the style
+
 				elif cmd.lower() == "help":
-					print("\nlisten - Start listening on specified port")
+					print(Style.BRIGHT + Fore.YELLOW)
+					print("listen - Start listening on specified port")
 					print("port - Specify what port to listen on, for example: port 1337")
 					print("exit - closes the application")
 					print("scan - scan a host for open ports. Example: scan 127.0.0.1")
-					print("clear/cls - clears screen (cls for windows, clear for linux)\n")
+					print("devices - lists active devices connected to your network.")
+					print("clear/cls - clears screen (cls for windows, clear for linux)")
+					print(Style.RESET_ALL)
 				elif cmd.lower() == "exit":
 					sys.exit()
 
