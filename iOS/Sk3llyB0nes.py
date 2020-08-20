@@ -2,7 +2,6 @@ import socket
 import sys
 import os
 from colorama import Fore, Back, Style
-import nmap
 
 print(" _____ _    _____ _ _      ______  _____ ")
 print("/  ___| |  |____ | | |     | ___ \|  _  | ")
@@ -137,28 +136,6 @@ def main():
 						## neccessary because a number with comma not counted as base 10 decimal
 						print(Style.BRIGHT + Fore.RED + "[☠] You cannot use a port below 1 or above 65353" + Style.RESET_ALL + "\n")
 						continue
-				elif cmd[:4].lower() == "scan":
-					global prts
-					prts = input(Style.BRIGHT + Fore.BLUE + "[i] Port range (blank for default 1000): " +  Style.RESET_ALL)
-					if prts == "":
-						prts = '1-1000'
-						scan(cmd[5:])
-					else:
-						scan(cmd[5:])
-				elif cmd.lower() == "devices":
-					nm = nmap.PortScanner()
-					host = input(Style.BRIGHT + Fore.BLUE + "[i] Enter your subnet: " + Style.RESET_ALL)
-					nm.scan(hosts=host + '/24', arguments='n -sP -PE -PA21,23,80,3389')
-					print(Style.BRIGHT + Fore.YELLOW + "Note: some hosts may block ping requests. Those that do will not show up here")
-					for ip in nm.all_hosts():
-						if nm[ip].state() == "up":
-							print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Host found: " + Fore.WHITE + nm[ip].hostname() + " | " + Fore.WHITE + ip + " | Status: " + Fore.GREEN + "Up")
-						elif nm[ip].state() == "down":
-							print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Host found: " + Fore.WHITE + nm[ip].hostname() + " | " + Fore.WHITE + ip + " | Status: " + Fore.RED + "Down")
-						else:
-							print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Host found: " + Fore.WHITE + nm[ip].hostname() + " | " + Fore.WHITE + ip + " | Status: " +  Fore.YELLOW + "Unkown")
-					# not entirely sure if ill keep this up,down, and unkown stuff since it only prints the ones that are up
-					print(Style.RESET_ALL) # also prints a new line as well as resetting the style
 
 				elif cmd.lower() == "help":
 					print(Style.BRIGHT + Fore.YELLOW)
