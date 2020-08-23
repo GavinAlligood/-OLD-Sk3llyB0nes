@@ -7,3 +7,5 @@ NOTE: iOS (and windows) are seperate because of notification modules. So the def
 i will soon organize the files better as well
 
 thanks to: thenewboston for initial reverse shell code. You taught me alot
+
+could switch to java
