@@ -8,4 +8,4 @@ i will soon organize the files better as well
 
 thanks to: thenewboston for initial reverse shell code. You taught me alot
 
-could switch to java
+note: not a tty shell sadly. It will have file transfer soon though
