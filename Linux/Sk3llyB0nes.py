@@ -171,8 +171,7 @@ def main():
 						print(Style.RESET_ALL)
 					except NameError:
 						print("\n" + Style.BRIGHT + Fore.RED + "[☠] Listening port is not defined")
-						print(Style.RESET_ALL)
-				elif cmd.lower() == "devices":	
+						print(Style.RESET_ALL)	
 				elif cmd.lower() == "help":
 					print(Style.BRIGHT + Fore.YELLOW)
 					print("listen - Start listening on specified port")
