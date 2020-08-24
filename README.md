@@ -8,4 +8,4 @@ i will soon organize the files better as well
 
 thanks to: thenewboston for initial reverse shell code. You taught me alot
 
-note: not a tty shell sadly. It will have file transfer soon though
+note: not a tty shell sadly. It will have file transfer soon though. Also, changing directories in the reverse shell DOES work, even if it says 'cant cd to...' youll notice it does change to that directory
