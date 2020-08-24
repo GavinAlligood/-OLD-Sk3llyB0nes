@@ -165,7 +165,14 @@ def main():
 							print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Host found: " + Fore.WHITE + nm[ip].hostname() + " | " + Fore.WHITE + ip + " | Status: " +  Fore.YELLOW + "Unkown")
 					# not entirely sure if ill keep this up,down, and unkown stuff since it only prints the ones that are up
 					print(Style.RESET_ALL) # also prints a new line as well as resetting the style
-
+				elif cmd.lower() == "show port":
+					try:
+						print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Listening port: " + Fore.WHITE + str(port))
+						print(Style.RESET_ALL)
+					except NameError:
+						print("\n" + Style.BRIGHT + Fore.RED + "[☠] Listening port is not defined")
+						print(Style.RESET_ALL)
+				elif cmd.lower() == "devices":	
 				elif cmd.lower() == "help":
 					print(Style.BRIGHT + Fore.YELLOW)
 					print("listen - Start listening on specified port")
