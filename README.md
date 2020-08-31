@@ -9,3 +9,4 @@ i will soon organize the files better as well
 thanks to: thenewboston for initial reverse shell code. You taught me alot
 
 note: not a tty shell sadly. It will have file transfer soon though. Also, changing directories in the reverse shell DOES work, even if it says 'cant cd to...' youll notice it does change to that directory. And directories without user read/write privileges will simply not be able to show any contents, even though you can cd there
+im working on netcat shortcut support for other reverse shells as well
