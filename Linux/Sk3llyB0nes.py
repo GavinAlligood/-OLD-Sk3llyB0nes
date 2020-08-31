@@ -4,6 +4,9 @@ import os
 from colorama import Fore, Back, Style
 import notify2
 import nmap
+import requests
+
+#### Dir bruteforce NOT FINISHED!
 
 print(" _____ _    _____ _ _      ______  _____ ")
 print("/  ___| |  |____ | | |     | ___ \|  _  | ")
@@ -18,8 +21,9 @@ print("                      |___/ ")
 
 ### simply raising the ammount of bytes sent changes things... mess with this and monitor network resources being used 
 
+SEPARATOR = "<SEPARATOR>"
+
 ## Notification settings:
-ICON_PATH = "/image/skelly.png"
 notify2.init("Sk3lly B0nes")
 
 # Create socket
@@ -44,7 +48,7 @@ def connect_bones():
 		global port
 		global s
 		s = socket.socket()
-		print(Style.BRIGHT + Fore.BLUE + "[i] Binding socket to port: " + str(port) + Style.RESET_ALL)
+		print(Style.BRIGHT + Fore.BLUE + "[i] Binding socket to port: " + Fore.WHITE + str(port) + Style.RESET_ALL)
 		s.bind((host, port))
 		s.listen(5) # number of bad connections
 	except socket.error as msg:
@@ -56,8 +60,8 @@ def create_skeleton():
 	try:
 		# socket MUST be listening before it can accept
 		conn, address = s.accept()
-		print(Style.BRIGHT + Fore.BLUE + "[i] Connected to " + address[0] + ':' + str(port) + Style.RESET_ALL)
-		n = notify2.Notification("Shell opened!", message = 'Connection succesfully established', icon = ICON_PATH)
+		print(Style.BRIGHT + Fore.BLUE + "[i] Connected to " + Fore.WHITE + address[0] + ':' + str(port) + Style.RESET_ALL)
+		n = notify2.Notification("Shell opened!", message = 'Connection succesfully established')
 		n.set_urgency(notify2.URGENCY_CRITICAL) # low, normal, critical
 		n.show()
 		command_skeleton(conn)
@@ -138,7 +142,7 @@ def main():
 							print(Style.BRIGHT + Fore.RED + "[☠] You cannot use a port below 1 or above 65353" + Style.RESET_ALL + "\n")
 						else:
 							port = int(cmd[5:])
-							print(Style.BRIGHT + Fore.BLUE + "[i] Port set to: " + str(port) + Style.RESET_ALL + "\n")
+							print(Style.BRIGHT + Fore.BLUE + "[i] Port set to: " + Fore.WHITE + str(port) + Style.RESET_ALL + "\n")
 					except ValueError:
 						## neccessary because a number with comma not counted as base 10 decimal
 						print(Style.BRIGHT + Fore.RED + "[☠] You cannot use a port below 1 or above 65353" + Style.RESET_ALL + "\n")
@@ -176,11 +180,21 @@ def main():
 					print(Style.BRIGHT + Fore.YELLOW)
 					print("listen - Start listening on specified port")
 					print("port - Specify what port to listen on, for example: port 1337")
+					print("		- show port - shows the port used to listen")
 					print("exit - closes the application")
 					print("scan - scan a host for open ports. Example: scan 127.0.0.1")
 					print("devices - lists active devices connected to your network.")
 					print("clear/cls - clears screen (cls for windows, clear for linux)")
+					print("show")
 					print(Style.RESET_ALL)
+				elif cmd[:3].lower() == "dir":
+					url = cmd[4:]
+					try:
+						requests.get(url)
+						#if c == "200":
+						print(Style.BRIGHT + Fore.BLUE + "[i] Dir: " + Fore.GREEN + "Up" + Style.RESET_ALL)
+					except requests.exceptions.ConnectionError:
+						print(Style.BRIGHT + Fore.BLUE + "[i] Dir: " + Fore.RED + "Down" + Style.RESET_ALL)
 				elif cmd.lower() == "exit":
 					sys.exit()
 
