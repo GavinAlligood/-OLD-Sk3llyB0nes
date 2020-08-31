@@ -6,8 +6,6 @@ import notify2
 import nmap
 import requests
 
-#### Dir bruteforce NOT FINISHED!
-
 print(" _____ _    _____ _ _      ______  _____ ")
 print("/  ___| |  |____ | | |     | ___ \|  _  | ")
 print("\ `--.| | __   / / | |_   _| |_/ /| |/' |_ __   ___  ___ ")
@@ -184,6 +182,7 @@ def main():
 					print("exit - closes the application")
 					print("scan - scan a host for open ports. Example: scan 127.0.0.1")
 					print("devices - lists active devices connected to your network.")
+					print("ncat [port]- starts a netcat listener. Best for CTFS or pentests. example: ncat 45")
 					print("clear/cls - clears screen (cls for windows, clear for linux)")
 					print("show")
 					print(Style.RESET_ALL)
@@ -195,6 +194,16 @@ def main():
 						print(Style.BRIGHT + Fore.BLUE + "[i] Dir: " + Fore.GREEN + "Up" + Style.RESET_ALL)
 					except requests.exceptions.ConnectionError:
 						print(Style.BRIGHT + Fore.BLUE + "[i] Dir: " + Fore.RED + "Down" + Style.RESET_ALL)
+				elif cmd[:4].lower() == "ncat":
+					try:
+						print(Style.BRIGHT + Fore.BLUE + "[i] Setting port to: " + Fore.WHITE + cmd[5:])
+						print(Fore.BLUE + "[i] Starting netcat listener")
+						print(Style.RESET_ALL)
+						print("[i] https://netsec.ws/?p=337 (How to get a tty shell)")
+						os.system("nc -lvnp " + cmd[5:])
+						
+					except ValueError:
+						print(Style.BRIGHT + Fore.RED + "[☠] Invalid port option" + Style.RESET_ALL + "\n")
 				elif cmd.lower() == "exit":
 					sys.exit()
 
