@@ -1,6 +1,6 @@
 # Sk3llyB0nes
 [WIP] hacking framework
-Im creating Sk3llyB0nes to help automate things while i do penetration testing/ctfs. I plan to add things like directory bruteforce, service/password bruteforce, etc
+Im creating Sk3llyB0nes to help automate things while i do penetration testing/ctfs.
 
 Im focusing On Linux right now, and i will add all the features to windows sometime later and all the features i CAN add to iOS i will
 
