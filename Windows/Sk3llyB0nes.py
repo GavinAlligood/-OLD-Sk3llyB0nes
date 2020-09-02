@@ -220,8 +220,6 @@ def main():
 					except:
 						print(Style.BRIGHT + Fore.RED + "[☠] Invalid url or does not exist. Format should be http://url.com/" + Style.RESET_ALL + "\n")
 						
-					except ValueError:
-						print(Style.BRIGHT + Fore.RED + "[☠] Invalid port option" + Style.RESET_ALL + "\n")
 				elif cmd.lower() == "ls":
 					print(Style.BRIGHT + Fore.BLUE + "\n[i] Current directory: " + Fore.WHITE + os.getcwd() + "/" + Style.RESET_ALL + "\n")
 					for file in os.listdir():
