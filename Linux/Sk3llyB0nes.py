@@ -5,7 +5,6 @@ from colorama import Fore, Back, Style
 import notify2
 import nmap
 import requests
-import subprocess
 
 print(" _____ _    _____ _ _      ______  _____ ")
 print("/  ___| |  |____ | | |     | ___ \|  _  | ")
