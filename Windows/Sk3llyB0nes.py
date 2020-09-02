@@ -184,6 +184,17 @@ def main():
 					print("clear/cls - clears screen (cls for windows, clear for linux)")
 					print("show")
 					print(Style.RESET_ALL)
+				elif cmd[:4].lower() == "ncat":
+					try:
+						## ncat automatically handles too big or wrong ports. less work for me!
+						print(Style.BRIGHT + Fore.BLUE + "[i] Setting port to: " + Fore.WHITE + cmd[5:])
+						print(Fore.BLUE + "[i] Starting netcat listener")
+						print(Style.RESET_ALL)
+						print("[i] https://netsec.ws/?p=337 (How to get a tty shell)")
+						os.system("nc -lvnp " + cmd[5:])
+
+					except ValueError:
+						print(Style.BRIGHT + Fore.RED + "[☠] Invalid port option" + Style.RESET_ALL + "\n")
 				elif cmd[:3].lower() == "dir":
 					try:
 						url = cmd[4:]
