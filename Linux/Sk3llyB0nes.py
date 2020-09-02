@@ -22,8 +22,6 @@ print("                      |___/ ")
 conf = open("skelly-bones.conf", "r+")
 conf_lines = conf.readlines()
 
-SEPARATOR = "<SEPARATOR>"
-
 ## Notification settings:
 notify2.init("Sk3lly B0nes")
 
