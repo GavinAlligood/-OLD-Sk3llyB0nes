@@ -5,6 +5,7 @@ from colorama import Fore, Back, Style
 import notify2
 import nmap
 import requests
+import subprocess
 
 print(" _____ _    _____ _ _      ______  _____ ")
 print("/  ___| |  |____ | | |     | ___ \|  _  | ")
@@ -215,10 +216,11 @@ def main():
 								pass
 					except FileNotFoundError:
 						print(Style.BRIGHT + Fore.RED + "[☠] File not found" + Style.RESET_ALL)
-					#except:
-						#print(Style.BRIGHT + Fore.RED + "[☠] Invalid url or does not exist. Format should be http://url.com/" + Style.RESET_ALL + "\n")
+					except:
+						print(Style.BRIGHT + Fore.RED + "[☠] Invalid url or does not exist. Format should be http://url.com/" + Style.RESET_ALL + "\n")
 				elif cmd[:4].lower() == "ncat":
 					try:
+						## ncat automatically handles too big or wrong ports. less work for me!
 						print(Style.BRIGHT + Fore.BLUE + "[i] Setting port to: " + Fore.WHITE + cmd[5:])
 						print(Fore.BLUE + "[i] Starting netcat listener")
 						print(Style.RESET_ALL)
