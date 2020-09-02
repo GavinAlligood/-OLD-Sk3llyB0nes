@@ -4,6 +4,7 @@ import os
 from colorama import Fore, Back, Style
 from plyer import notification
 import nmap
+import requests
 
 print(" _____ _    _____ _ _      ______  _____ ")
 print("/  ___| |  |____ | | |     | ___ \|  _  | ")
@@ -14,11 +15,10 @@ print("\____/|_|\_\____/|_|_|\__, \____/  \___/|_| |_|\___||___/ ")
 print("                       __/ | ")
 print("                      |___/ ")
 
-### WINDOWS VERSION ###
-
-### Run in background Unix: python3 myfile &
-
 ### simply raising the ammount of bytes sent changes things... mess with this and monitor network resources being used 
+
+conf = open("skelly-bones.conf", "r+")
+conf_lines = conf.readlines()
 
 # Create socket
 def gather_bones():
@@ -42,7 +42,7 @@ def connect_bones():
 		global port
 		global s
 		s = socket.socket()
-		print(Style.BRIGHT + Fore.BLUE + "[i] Binding socket to port: " + str(port) + Style.RESET_ALL)
+		print(Style.BRIGHT + Fore.BLUE + "[i] Binding socket to port: " + Fore.WHITE + str(port) + Style.RESET_ALL)
 		s.bind((host, port))
 		s.listen(5) # number of bad connections
 	except socket.error as msg:
@@ -54,7 +54,7 @@ def create_skeleton():
 	try:
 		# socket MUST be listening before it can accept
 		conn, address = s.accept()
-		print(Style.BRIGHT + Fore.BLUE + "[i] Connected to " + address[0] + ':' + str(port) + Style.RESET_ALL)
+		print(Style.BRIGHT + Fore.BLUE + "[i] Connected to " + Fore.WHITE + address[0] + ':' + str(port) + Style.RESET_ALL)
 		notification.notify(title='Shell opened!', message='Connection succesfully established', app_icon=None, timeout=2)
 		command_skeleton(conn)
 		conn.close()
@@ -112,6 +112,9 @@ def scan(addr):
 		print("Correct usage example: scan 127.0.0.1\n")
 		print("Port range: 55-1040" +  Style.RESET_ALL)
 
+def write(word):
+	f1 = open("log1.txt","a")
+	f1.write(word +"\n")
 
 def main():
 	global port                
@@ -134,7 +137,7 @@ def main():
 							print(Style.BRIGHT + Fore.RED + "[☠] You cannot use a port below 1 or above 65353" + Style.RESET_ALL + "\n")
 						else:
 							port = int(cmd[5:])
-							print(Style.BRIGHT + Fore.BLUE + "[i] Port set to: " + str(port) + Style.RESET_ALL + "\n")
+							print(Style.BRIGHT + Fore.BLUE + "[i] Port set to: " + Fore.WHITE + str(port) + Style.RESET_ALL + "\n")
 					except ValueError:
 						## neccessary because a number with comma not counted as base 10 decimal
 						print(Style.BRIGHT + Fore.RED + "[☠] You cannot use a port below 1 or above 65353" + Style.RESET_ALL + "\n")
@@ -161,16 +164,66 @@ def main():
 							print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Host found: " + Fore.WHITE + nm[ip].hostname() + " | " + Fore.WHITE + ip + " | Status: " +  Fore.YELLOW + "Unkown")
 					# not entirely sure if ill keep this up,down, and unkown stuff since it only prints the ones that are up
 					print(Style.RESET_ALL) # also prints a new line as well as resetting the style
-
+				elif cmd.lower() == "show port":
+					try:
+						print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Listening port: " + Fore.WHITE + str(port))
+						print(Style.RESET_ALL)
+					except NameError:
+						print("\n" + Style.BRIGHT + Fore.RED + "[☠] Listening port is not defined")
+						print(Style.RESET_ALL)	
 				elif cmd.lower() == "help":
 					print(Style.BRIGHT + Fore.YELLOW)
 					print("listen - Start listening on specified port")
 					print("port - Specify what port to listen on, for example: port 1337")
+					print("		- show port - shows the port used to listen")
 					print("exit - closes the application")
 					print("scan - scan a host for open ports. Example: scan 127.0.0.1")
 					print("devices - lists active devices connected to your network.")
+					print("ncat [port] - starts a netcat listener. Best for CTFS or pentests. example: ncat 45")
+					print("dir [url] - starts a directory bruteforce on that url. example: dir http://eee.com/  wordlist: /home/user/Documents/wordlist.txt")
 					print("clear/cls - clears screen (cls for windows, clear for linux)")
+					print("show")
 					print(Style.RESET_ALL)
+				elif cmd[:3].lower() == "dir":
+					try:
+						url = cmd[4:]
+						## dont forget this starts at 0 so '1' is line # 2
+						list_limit = conf_lines[1]
+						wordlist = input(Style.BRIGHT + Fore.BLUE + "[i] Wordlist path: " + Fore.WHITE)
+						print(Fore.BLUE + "[i] Note that some urls beggining with # may be false positive, and the current list limit is: " + Fore.WHITE + str(list_limit) + Fore.BLUE + ". This may be changed in the config file" + Style.RESET_ALL)
+						wl = open(wordlist)
+						print(wl)
+						for i in range(int(list_limit)):
+							word = wl.readline(10).strip()
+							furl = url+word
+							response = requests.get(furl)
+							if (response.status_code == 200):
+								if furl != url:
+									print(Style.BRIGHT + Fore.BLUE + "[i] Found: " + Fore.GREEN + furl + Style.RESET_ALL)
+								write(furl)
+							else:
+								#print(Style.BRIGHT + Fore.BLUE + "[i] Not Found: " + Fore.RED + furl + Style.RESET_ALL)
+								pass
+					except FileNotFoundError:
+						print(Style.BRIGHT + Fore.RED + "[☠] File not found" + Style.RESET_ALL)
+					except:
+						print(Style.BRIGHT + Fore.RED + "[☠] Invalid url or does not exist. Format should be http://url.com/" + Style.RESET_ALL + "\n")
+				elif cmd[:4].lower() == "ncat":
+					try:
+						## ncat automatically handles too big or wrong ports. less work for me!
+						print(Style.BRIGHT + Fore.BLUE + "[i] Setting port to: " + Fore.WHITE + cmd[5:])
+						print(Fore.BLUE + "[i] Starting netcat listener")
+						print(Style.RESET_ALL)
+						print("[i] https://netsec.ws/?p=337 (How to get a tty shell)")
+						os.system("nc -lvnp " + cmd[5:])
+						
+					except ValueError:
+						print(Style.BRIGHT + Fore.RED + "[☠] Invalid port option" + Style.RESET_ALL + "\n")
+				elif cmd.lower() == "ls":
+					print(Style.BRIGHT + Fore.BLUE + "\n[i] Current directory: " + Fore.WHITE + os.getcwd() + "/" + Style.RESET_ALL + "\n")
+					for file in os.listdir():
+						print(file)
+					print("\n")
 				elif cmd.lower() == "exit":
 					sys.exit()
 
@@ -182,3 +235,4 @@ def main():
 			continue
 
 main()
+conf.close()
