@@ -17,10 +17,10 @@ print("                      |___/ ")
 
 ### Run in background Unix: python3 myfile &
 
-### simply raising the ammount of bytes sent changes things... mess with this and monitor network resources being used 
-
 conf = open("skelly-bones.conf", "r+")
 conf_lines = conf.readlines()
+
+BYTES = 10000
 
 ## Notification settings:
 notify2.init("Sk3lly B0nes")
@@ -71,18 +71,29 @@ def create_skeleton():
 def command_skeleton(conn):
 	while True:
 		try:
-			cmd = input()
+			## doesnt need to be too big 
+			cmd = input("Skeleton > ")
 			if cmd == 'quit':
 				conn.close()
 				s.close()
-				# handle ctrl + c exception so sockets actually close
 				#sys.exit()
 				main()
-			# system commands are stored as bytes thats why you must encode them
-			if len(str.encode(cmd)) > 0:
+			elif cmd == 'pwd':
+				conn.send(cmd.encode())
+				files = conn.recv(BYTES)
+				files = files.decode()
+				print(files)
+			elif cmd == "ls":
+				conn.send(cmd.encode())
+				dir = conn.recv(BYTES)
+				print(dir.decode())
+				for file in dir:
+					print(file)
+			#if len(str.encode(cmd)) > 0:
+			"""else:
 				conn.send(str.encode(cmd))
-				client_response = str(conn.recv(10000), "utf-8")
-				print(client_response, end="") # end='': dont give a new line at the end of cmd
+				client_response = str(conn.recv(BYTES), "utf-8")
+				print(client_response, end="") # end='': dont give a new line at the end of cmd"""
 		except KeyboardInterrupt:
 			print("") # Another empty line
 			print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Type 'quit' to close shell" + Style.RESET_ALL)
@@ -118,10 +129,6 @@ def scan(addr):
 		print("\n" + Style.BRIGHT + Fore.RED + "[☠] Error with keyword: " + str(msg) + " Either invalid host or port range" + "\n")
 		print("Correct usage example: scan 127.0.0.1\n")
 		print("Port range: 55-1040" +  Style.RESET_ALL)
-
-def write(word):
-	f1 = open("log1.txt","a")
-	f1.write(word +"\n")
 
 def main():
 	global port                
@@ -189,7 +196,6 @@ def main():
 					print("ncat [port] - starts a netcat listener. Best for CTFS or pentests. example: ncat 45")
 					print("dir [url] - starts a directory bruteforce on that url. example: dir http://eee.com/  wordlist: /home/user/Documents/wordlist.txt")
 					print("clear/cls - clears screen (cls for windows, clear for linux)")
-					print("show")
 					print(Style.RESET_ALL)
 				elif cmd[:3].lower() == "dir":
 					try:
