@@ -31,3 +31,8 @@ upload - upload a file to victims machine (not fully functional yet, crashes Sk3
 screenshot - takes a screenshot of the victims machine. You will have to download it. They start of labeled "Shot1" then "Shot2", etc.
 
 use the 'help' command inside the framework to view other things the framework can do
+
+## Screenshots:
+###### Some spots covered in red for privacy reasons
+![Image failed to load](/git_res/screenshot_skelly1.jpg?raw=true "Sk3lly simple usage")
+![Image failed to load](/git_res/screenshot_skelly2.jpg?raw=true "Sk3lly simple usage")
