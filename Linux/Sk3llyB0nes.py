@@ -6,6 +6,7 @@ import notify2
 import nmap
 import requests
 
+os.system('clear')
 print(" _____ _    _____ _ _      ______  _____ ")
 print("/  ___| |  |____ | | |     | ___ \|  _  | ")
 print("\ `--.| | __   / / | |_   _| |_/ /| |/' |_ __   ___  ___ ")
@@ -91,22 +92,15 @@ def command_skeleton(conn):
 			elif cmd == 'upload':
 				try:
 					conn.send(cmd.encode())
-					print("Sent command")
 					path = input("[i] File to upload (include extension): ")
 					conn.send(path.encode())
-					print("sent path")
 					f = open(path, "rb")
-					print("opening file")
 					contents = f.read()
-					print("reading contents")
 					while contents:
 						conn.send(contents)
-						print("Sent contents")
 						contents = f.read(BYTES)
-						print("Read contents")
 					f.close()
 					s.send('complete'.encode())
-					print("Sent final 'complete' message")
 				except FileNotFoundError:
 					print("[i] File not found!")
 					continue
@@ -152,6 +146,10 @@ def scan(addr):
 		print("\n" + Style.BRIGHT + Fore.RED + "[☠] Error with keyword: " + str(msg) + " Either invalid host or port range" + "\n")
 		print("Correct usage example: scan 127.0.0.1\n")
 		print("Port range: 55-1040" +  Style.RESET_ALL)
+
+def write(word):
+	f1 = open("log1.txt","a")
+	f1.write(word +"\n")
 
 def main():
 	global port                
