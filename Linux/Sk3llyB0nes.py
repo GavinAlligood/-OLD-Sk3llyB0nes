@@ -2,7 +2,7 @@ import socket
 import sys
 import os
 from colorama import Fore, Back, Style
-import notify2
+#import notify2
 import nmap
 import requests
 
@@ -24,7 +24,7 @@ conf_lines = conf.readlines()
 BYTES = 10000000
 
 ## Notification settings:
-notify2.init("Sk3lly B0nes")
+#notify2.init("Sk3lly B0nes")
 
 # Create socket
 def gather_bones():
@@ -61,9 +61,9 @@ def create_skeleton():
 		# socket MUST be listening before it can accept
 		conn, address = s.accept()
 		print(Style.BRIGHT + Fore.BLUE + "[i] Connected to " + Fore.WHITE + address[0] + ':' + str(port) + Style.RESET_ALL)
-		n = notify2.Notification("Shell opened!", message = 'Connection succesfully established')
-		n.set_urgency(notify2.URGENCY_CRITICAL) # low, normal, critical
-		n.show()
+	#	n = notify2.Notification("Shell opened!", message = 'Connection succesfully established')
+#		n.set_urgency(notify2.URGENCY_CRITICAL) # low, normal, critical
+#		n.show()
 		command_skeleton(conn)
 		conn.close()
 	except BrokenPipeError:
