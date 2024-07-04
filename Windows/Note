@@ -1,3 +1,0 @@
-In order for colors to work while running the python file, make sure to navigate to the directory of the file and run python3 Sk3llyB0nes.py instead of just double clikcking it
-
-IMPORTANT: In order for netcat to work, drag nc.exe from your netcat install folder into the same folder as sk3llyb0nes.py
