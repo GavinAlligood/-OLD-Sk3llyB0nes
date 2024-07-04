@@ -34,5 +34,5 @@ Screenshot - Takes a screenshot of the target's machine. They start labeled "Sho
 Use the 'help' command inside the framework to view other things the framework can do
 
 ## Screenshots:
-![Image failed to load](/git_res/screenshot_skelly1.jpg?raw=true "Sk3lly simple usage")
-![Image failed to load](/git_res/screenshot_skelly2.jpg?raw=true "Sk3lly simple usage")
+![Image failed to load](/screenshot_skelly1.jpg?raw=true "Sk3lly simple usage")
+![Image failed to load](/screenshot_skelly2.jpg?raw=true "Sk3lly simple usage")
