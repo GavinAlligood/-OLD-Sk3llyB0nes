@@ -16,7 +16,7 @@ print("\____/|_|\_\____/|_|_|\__, \____/  \___/|_| |_|\___||___/ ")
 print("                       __/ | ")
 print("                      |___/ ")
 
-### Run in background Unix: python3 myfile &
+## Run in background Unix: python3 myfile &
 
 conf = open("skelly-bones.conf", "r+")
 conf_lines = conf.readlines()
@@ -26,7 +26,7 @@ BYTES = 10000000
 ## Notification settings:
 #notify2.init("Sk3lly B0nes")
 
-# Create socket
+## Create socket
 def gather_bones():
 	try:
 		global host
@@ -41,7 +41,7 @@ def gather_bones():
 		main()
 
 
-# Bind socket to port and wait for connection
+## Bind socket to port and wait for connection
 def connect_bones():
 	try:
 		global host
@@ -50,29 +50,28 @@ def connect_bones():
 		s = socket.socket()
 		print(Style.BRIGHT + Fore.BLUE + "[i] Binding socket to port: " + Fore.WHITE + str(port) + Style.RESET_ALL)
 		s.bind((host, port))
-		s.listen(5) # number of bad connections
+		s.listen(5) ## Listen through 5 bad connections
 	except socket.error as msg:
 		print(Style.BRIGHT + Fore.RED + "\n" "[☠] Socket binding error: " + str(msg) + Style.RESET_ALL + "\n")
 		main()
-
-# Connect
+        
+## Connect
 def create_skeleton():
 	try:
-		# socket MUST be listening before it can accept
 		conn, address = s.accept()
 		print(Style.BRIGHT + Fore.BLUE + "[i] Connected to " + Fore.WHITE + address[0] + ':' + str(port) + Style.RESET_ALL)
-	#	n = notify2.Notification("Shell opened!", message = 'Connection succesfully established')
-#		n.set_urgency(notify2.URGENCY_CRITICAL) # low, normal, critical
-#		n.show()
+		#n = notify2.Notification("Shell opened!", message = 'Connection succesfully established')
+		#n.set_urgency(notify2.URGENCY_CRITICAL) # low, normal, critical
+		#n.show()
 		command_skeleton(conn)
 		conn.close()
 	except BrokenPipeError:
 		print(Style.BRIGHT + Fore.RED + "[☠] Broken Pipe. Closing shell" + Style.RESET_ALL + "\n")
 
+## Commands to use once connected
 def command_skeleton(conn):
 	while True:
 		try:
-			## doesnt need to be too big 
 			cmd = input()
 			if cmd == 'quit':
 				conn.close()
@@ -107,16 +106,15 @@ def command_skeleton(conn):
 			else:
 				conn.send(str.encode(cmd))
 				client_response = str(conn.recv(BYTES), "utf-8")
-				print(client_response, end="") # end='': dont give a new line at the end of cmd
+				print(client_response, end="")
 		except KeyboardInterrupt:
-			print("") # Another empty line
+			print("")
 			print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Type 'quit' to close shell" + Style.RESET_ALL)
 			continue
 		except UnicodeDecodeError:
 			print("A decoding error occured.")
 			continue
 
-#nmap scan module
 def scan(addr):
 	try:
 		scanner = nmap.PortScanner()
@@ -135,7 +133,7 @@ def scan(addr):
 			print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Open ports: " + Fore.WHITE)
 			print("[i] Protocol: " + scanner[addr].all_protocols()[0])
 			for p in scanner[addr]['tcp'].keys():
-				print("[i] Open port: " + str(p) + "\tService: " + scanner[addr]['tcp'][p]['name']) # tcp only for now. This line prints service info
+				print("[i] Open port: " + str(p) + "\tService: " + scanner[addr]['tcp'][p]['name']) ## TCP only for now
 
 			print(Style.RESET_ALL)
 		except IndexError:
@@ -174,7 +172,7 @@ def main():
 							port = int(cmd[5:])
 							print(Style.BRIGHT + Fore.BLUE + "[i] Port set to: " + Fore.WHITE + str(port) + Style.RESET_ALL + "\n")
 					except ValueError:
-						## neccessary because a number with comma not counted as base 10 decimal
+						## In case the user inputs a comma
 						print(Style.BRIGHT + Fore.RED + "[☠] You cannot use a port below 1 or above 65353" + Style.RESET_ALL + "\n")
 						continue
 				elif cmd[:4].lower() == "scan":
@@ -197,8 +195,7 @@ def main():
 							print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Host found: " + Fore.WHITE + nm[ip].hostname() + " | " + Fore.WHITE + ip + " | Status: " + Fore.RED + "Down")
 						else:
 							print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Host found: " + Fore.WHITE + nm[ip].hostname() + " | " + Fore.WHITE + ip + " | Status: " +  Fore.YELLOW + "Unkown")
-					# not entirely sure if ill keep this up,down, and unkown stuff since it only prints the ones that are up
-					print(Style.RESET_ALL) # also prints a new line as well as resetting the style
+					print(Style.RESET_ALL)
 				elif cmd.lower() == "show port":
 					try:
 						print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Listening port: " + Fore.WHITE + str(port))
@@ -221,7 +218,7 @@ def main():
 				elif cmd[:3].lower() == "dir":
 					try:
 						url = cmd[4:]
-						## dont forget this starts at 0 so '1' is line # 2
+						## '1' is line 2
 						list_limit = conf_lines[1]
 						wordlist = input(Style.BRIGHT + Fore.BLUE + "[i] Wordlist path: " + Fore.WHITE)
 						print(Fore.BLUE + "[i] Note that some urls beggining with # may be false positive, and the current list limit is: " + Fore.WHITE + str(list_limit) + Fore.BLUE + ". This may be changed in the config file" + Style.RESET_ALL)
@@ -244,7 +241,7 @@ def main():
 						print(Style.BRIGHT + Fore.RED + "[☠] Invalid url or does not exist. Format should be http://url.com/" + Style.RESET_ALL + "\n")
 				elif cmd[:4].lower() == "ncat":
 					try:
-						## ncat automatically handles too big or wrong ports. less work for me!
+						## Netcat already handles ports that don't exist
 						print(Style.BRIGHT + Fore.BLUE + "[i] Setting port to: " + Fore.WHITE + cmd[5:])
 						print(Fore.BLUE + "[i] Starting netcat listener")
 						print(Style.RESET_ALL)
@@ -264,7 +261,7 @@ def main():
 				else:
 					print("\n" + Style.BRIGHT + Fore.RED + "☠ Get your bones together!! ☠" + Style.RESET_ALL + "\n")
 		except KeyboardInterrupt:
-			print("") # empty line for asthetic purposes
+			print("")
 			print("\n" + Style.BRIGHT + Fore.BLUE + "[i] Type exit to close program" + Style.RESET_ALL + "\n")
 			continue
 
